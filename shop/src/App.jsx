@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react'
 import Header from './components/header/Header'
 import Footer from './components/footer/Footer'
 import Items from './components/items/Items'
+import Contacts from './components/contacts/Contacts'
 import './index.css'
 
 function App() {
@@ -83,6 +84,7 @@ function App() {
   const [cartItems, setCartItems] = useState([])
   const [selectedCategory, setSelectedCategory] = useState('Все товары')
   const [searchTerm, setSearchTerm] = useState('')
+  const [currentPage, setCurrentPage] = useState('shop') // 'shop' или 'contacts'
 
   const onAdd = useCallback((item) => {
     setCartItems(prevItems => {
@@ -114,6 +116,15 @@ function App() {
     setSearchTerm(term)
   }
 
+  const handlePageChange = (page) => {
+    setCurrentPage(page)
+    // Сбрасываем поиск и категорию при переходе на главную
+    if (page === 'shop') {
+      setSearchTerm('')
+      setSelectedCategory('Все товары')
+    }
+  }
+
   return (
     <div className="wrapper">
       <Header 
@@ -123,13 +134,21 @@ function App() {
         selectedCategory={selectedCategory}
         onSelectCategory={setSelectedCategory}
         onSearch={handleSearch}
+        currentPage={currentPage}
+        onPageChange={handlePageChange}
       />
-      <Items 
-        items={items} 
-        onAdd={onAdd}
-        selectedCategory={selectedCategory}
-        searchTerm={searchTerm}
-      />
+      
+      {currentPage === 'shop' ? (
+        <Items 
+          items={items} 
+          onAdd={onAdd}
+          selectedCategory={selectedCategory}
+          searchTerm={searchTerm}
+        />
+      ) : (
+        <Contacts />
+      )}
+      
       <Footer />
     </div>
   )

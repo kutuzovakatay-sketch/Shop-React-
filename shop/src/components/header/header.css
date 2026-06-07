@@ -181,41 +181,31 @@ header .presentasion::before {
   text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
 
-/* Адаптивность */
-@media (max-width: 768px) {
-  .header-container {
-    flex-direction: column;
-    gap: 15px;
-  }
-  
-  .logo-section {
-    width: 100%;
-    justify-content: space-between;
-  }
-  
-  .logo-section input {
-    width: 200px;
-  }
-  
-  .right-section {
-    width: 100%;
-    justify-content: flex-end;
-  }
-  
-  header .presentasion {
-    height: 300px;
-  }
-  
-  header .presentasion::after {
-    font-size: 24px;
-    top: 50px;
-    left: 20px;
-    width: 250px;
-  }
-  
-  header .presentasion::before {
-    top: 150px;
-    left: 20px;
-    font-size: 12px;
-  }
+/* Активная страница в навигации */
+.right-section ul.nav li.active {
+  color: #ff007b;
+  position: relative;
 }
+
+.right-section ul.nav li.active::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 2px;
+  background: #ff007b;
+  border-radius: 2px;
+}
+
+/* Логотип при наведении */
+.logo-section .logo {
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.logo-section .logo:hover {
+  color: #ff007b;
+}
+
