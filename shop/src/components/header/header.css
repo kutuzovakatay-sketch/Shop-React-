@@ -1,0 +1,67 @@
+header .logo{
+  font-weight: 600;
+  font-size: 20px;
+}
+
+header ul.nav{
+  float: right;
+  list-style: none;
+
+}
+
+header ul.nav li{
+  display: inline;
+  margin-left: 25px;
+  cursor: pointer;
+  
+}
+
+header ul.nav li:hover{
+  /* opacity: 0.5; */
+  color: #ff007b;
+}
+
+header .presentasion{
+  margin: 50px 0;
+  background: url(/src/img/presentasion.jpg) no-repeat;
+  width: 100%;
+  height: 500px;
+  background-size: cover;
+  background-position: center center;
+  background-blend-mode: multiply;
+  background-color: #bcbcbc;
+  position: relative;
+}
+
+header .presentasion::after{
+  content: "Самые милые и уютные вещички здесь!";
+  position: absolute;
+  top: 100px;
+  left: 50px;
+  width: 400px;
+  font-size: 40px;
+  font-weight: 600;
+  color: #fff;
+}
+
+header .presentasion::before{
+  content: "Делаем своими руками :3";
+  position: absolute;
+  top: 250px;
+  left: 50px;
+  width: 400px;
+  font-size: 15px;
+  font-weight: 300;
+  color: #fff;
+}
+
+header .shop-cart-button{
+  float:right;
+  cursor: pointer;
+  transition: color 500ms ease;
+}
+
+header .shop-cart-button:hover,
+header .shop-cart-button:active{
+  color: #ff007b;
+}

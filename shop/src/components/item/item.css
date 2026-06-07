@@ -1,0 +1,47 @@
+main .item{
+  width: 30%;
+  margin-bottom: 50px;
+  background: #dfdfdf42;
+  overflow: hidden;
+  border-radius: 10px;
+  position: relative;
+  padding-bottom: 20px;
+  transition: transform 500ms ease;
+}
+
+
+main .item img{
+  width: 100%;
+  height: 400px;
+}
+
+main .item:hover{
+  transform: scale(1.05);
+}
+
+main h2, main p, main b{
+  margin: 10px 20px;
+  color: #333;
+}
+
+main .add-to-cart{
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  background: #4a2020;
+  width: 35px;
+  height: 35px;
+  text-align: center;
+  line-height: 35px;
+  color: #fff;
+  border-radius: 50%;
+  cursor: pointer;
+  font-weight: 600;
+  /* transition: transform 500ms ease; */
+
+}
+
+main .add-to-cart:hover{
+  background: #6c2f2f;
+  /* transform: scale(1.2); */
+}

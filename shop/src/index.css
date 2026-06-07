@@ -17,62 +17,7 @@ body{
   margin: 50px auto;
 }
 
-header .logo{
-  font-weight: 600;
-  font-size: 20px;
-}
 
-header ul.nav{
-  float: right;
-  list-style: none;
-
-}
-
-header ul.nav li{
-  display: inline;
-  margin-left: 25px;
-  cursor: pointer;
-  
-}
-
-header ul.nav li:hover{
-  /* opacity: 0.5; */
-  color: #ff007b;
-}
-
-header .presentasion{
-  margin: 50px 0;
-  background: url(./img/presentasion.jpg) no-repeat;
-  width: 100%;
-  height: 500px;
-  background-size: cover;
-  background-position: center center;
-  background-blend-mode: multiply;
-  background-color: #bcbcbc;
-  position: relative;
-}
-
-header .presentasion::after{
-  content: "Самые милые и уютные вещички здесь!";
-  position: absolute;
-  top: 100px;
-  left: 50px;
-  width: 400px;
-  font-size: 40px;
-  font-weight: 600;
-  color: #fff;
-}
-
-header .presentasion::before{
-  content: "Делаем своими руками :3";
-  position: absolute;
-  top: 250px;
-  left: 50px;
-  width: 400px;
-  font-size: 15px;
-  font-weight: 300;
-  color: #fff;
-}
 
 main{
   display: flex;
@@ -82,67 +27,18 @@ main{
 
 }
 
-main .item{
-  width: 30%;
-  margin-bottom: 50px;
-  background: #ca599042;
-  overflow: hidden;
+
+
+input{
+  margin-left: 25px;
+  padding: 5px;
+  width: 400px;
+  height:25px;
   border-radius: 10px;
-  position: relative;
-  padding-bottom: 20px;
-  transition: transform 500ms ease;
-}
-
-
-main .item img{
-  width: 100%;
-  height: 400px;
-}
-
-main .item:hover{
-  transform: scale(1.05);
-}
-
-main h2, main p, main b{
-  margin: 10px 20px;
-  color: #333;
-}
-
-main .add-to-cart{
-  position: absolute;
-  right: 20px;
-  bottom: 20px;
-  background: #4a2020;
-  width: 35px;
-  height: 35px;
-  text-align: center;
-  line-height: 35px;
-  color: #fff;
-  border-radius: 50%;
-  cursor: pointer;
-  font-weight: 600;
-  /* transition: transform 500ms ease; */
+  border: 1px solid #e6e6e6;
+  outline: none;
 
 }
 
-main .add-to-cart:hover{
-  background: #6c2f2f;
-  /* transform: scale(1.2); */
-}
 
 
-footer{
-  text-align: center;
-  margin-top: 10px;
-}
-
-header .shop-cart-button{
-  float:right;
-  cursor: pointer;
-  transition: color 500ms ease;
-}
-
-header .shop-cart-button:hover,
-header .shop-cart-button:active{
-  color: #ff007b;
-}

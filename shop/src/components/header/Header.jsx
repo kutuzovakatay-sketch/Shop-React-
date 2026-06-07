@@ -1,14 +1,16 @@
 import React, { useState } from 'react'
 import {FaShoppingCart} from 'react-icons/fa'
+import './header.css'
 
 export default function Header() {
   let [CartOpen,setCartOpen] = useState(false);
   return (
     <header>
       <div>
-        <span className='logo'>Knitten things</span>
+        <span className='logo'>Knitten things
+          <input type="text" placeholder='Поиск :3' />
+        </span>
         <ul className='nav'>
-          <li>Про нас</li>
           <li>Контакты</li>
           <li>Личный кабинет</li>
         </ul>
