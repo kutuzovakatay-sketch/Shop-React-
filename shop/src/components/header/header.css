@@ -1,28 +1,138 @@
-header .logo{
+/* Контейнер для всей шапки */
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  position: relative;
+  width: 100%;
+}
+
+/* Левая секция с логотипом и поиском */
+.logo-section {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.logo-section .logo {
   font-weight: 600;
   font-size: 20px;
+  white-space: nowrap;
 }
 
-header ul.nav{
-  float: right;
+
+
+.logo-section input {
+  margin-left: 0;
+  padding: 8px 12px;
+  width: 350px;
+  height: 25px;
+  border-radius: 20px;
+  border: 1px solid #e0e0e0;
+  outline: none;
+  background-color: #f5f5f5;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.logo-section input:focus {
+  border-color: #ff007b;
+  box-shadow: 0 0 0 2px rgba(255, 0, 123, 0.1);
+  background-color: #fff;
+}
+
+.logo-section input::placeholder {
+  color: #bbb;
+  font-size: 14px;
+}
+
+/* Анимация для результатов поиска */
+@keyframes searchPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.02);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.no-items {
+  animation: searchPulse 0.5s ease;
+}
+
+/* Правая секция с меню и корзиной */
+.right-section {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-left: auto;
+}
+
+/* Навигационное меню */
+.right-section ul.nav {
+  display: flex;
   list-style: none;
-
+  gap: 25px;
+  margin: 0;
+  padding: 0;
 }
 
-header ul.nav li{
-  display: inline;
-  margin-left: 25px;
+.right-section ul.nav li {
   cursor: pointer;
-  
+  font-weight: 500;
+  transition: color 0.3s ease;
+  white-space: nowrap;
 }
 
-header ul.nav li:hover{
-  /* opacity: 0.5; */
+.right-section ul.nav li:hover {
   color: #ff007b;
 }
 
-header .presentasion{
-  margin: 50px 0;
+/* Иконка корзины */
+.cart-icon-container {
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.shop-cart-button {
+  font-size: 24px;
+  transition: color 0.3s ease;
+}
+
+.shop-cart-button:hover {
+  color: #ff007b;
+}
+
+.shop-cart-button.active {
+  color: #ff007b;
+}
+
+/* Бейдж с количеством товаров */
+.cart-badge {
+  position: absolute;
+  top: -10px;
+  right: -12px;
+  background: #ff007b;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: bold;
+}
+
+/* Презентационный баннер - только для главной страницы */
+header .presentasion {
+  margin: 30px 0;
   background: url(/src/img/presentasion.jpg) no-repeat;
   width: 100%;
   height: 500px;
@@ -31,9 +141,23 @@ header .presentasion{
   background-blend-mode: multiply;
   background-color: #bcbcbc;
   position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  animation: fadeIn 0.5s ease;
 }
 
-header .presentasion::after{
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+header .presentasion::after {
   content: "Самые милые и уютные вещички здесь!";
   position: absolute;
   top: 100px;
@@ -42,9 +166,10 @@ header .presentasion::after{
   font-size: 40px;
   font-weight: 600;
   color: #fff;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
-header .presentasion::before{
+header .presentasion::before {
   content: "Делаем своими руками :3";
   position: absolute;
   top: 250px;
@@ -53,15 +178,44 @@ header .presentasion::before{
   font-size: 15px;
   font-weight: 300;
   color: #fff;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
 }
 
-header .shop-cart-button{
-  float:right;
-  cursor: pointer;
-  transition: color 500ms ease;
-}
-
-header .shop-cart-button:hover,
-header .shop-cart-button:active{
-  color: #ff007b;
+/* Адаптивность */
+@media (max-width: 768px) {
+  .header-container {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .logo-section {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .logo-section input {
+    width: 200px;
+  }
+  
+  .right-section {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  
+  header .presentasion {
+    height: 300px;
+  }
+  
+  header .presentasion::after {
+    font-size: 24px;
+    top: 50px;
+    left: 20px;
+    width: 250px;
+  }
+  
+  header .presentasion::before {
+    top: 150px;
+    left: 20px;
+    font-size: 12px;
+  }
 }

@@ -1,0 +1,60 @@
+main {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+main .item {
+  width: 30%;
+  margin-bottom: 50px;
+  background: #dfdfdf42;
+  overflow: hidden;
+  border-radius: 10px;
+  position: relative;
+  padding-bottom: 20px;
+  transition: transform 500ms ease;
+  animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+main .item:hover {
+  transform: scale(1.05);
+}
+
+.no-items {
+  text-align: center;
+  padding: 50px;
+  width: 100%;
+  color: #999;
+  font-size: 18px;
+  animation: fadeIn 0.3s ease;
+}
+
+.no-items-suggestion {
+  font-size: 14px;
+  margin-top: 10px;
+  color: #bbb;
+}

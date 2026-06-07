@@ -1,0 +1,161 @@
+.cart {
+  position: fixed;
+  top: 80px;
+  right: 20px;
+  width: 380px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  z-index: 1000;
+  max-height: 70vh;
+  overflow-y: auto;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.cart h2 {
+  margin-bottom: 20px;
+  color: #4a2020;
+  font-size: 24px;
+  border-bottom: 2px solid #ff007b;
+  display: inline-block;
+  padding-bottom: 5px;
+}
+
+.empty-cart {
+  text-align: center;
+  color: #999;
+  padding: 40px 0;
+  font-size: 16px;
+}
+
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.cart-item-info {
+  flex: 1;
+}
+
+.cart-item-info h3 {
+  font-size: 16px;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.cart-item-info p {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 3px;
+}
+
+.cart-item-info b {
+  font-size: 14px;
+  color: #ff007b;
+}
+
+.cart-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cart-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cart-btn.minus {
+  background: #f0f0f0;
+  color: #666;
+}
+
+.cart-btn.minus:hover {
+  background: #e0e0e0;
+  transform: scale(1.05);
+}
+
+.cart-btn.plus {
+  background: #4a2020;
+  color: white;
+}
+
+.cart-btn.plus:hover {
+  background: #6c2f2f;
+  transform: scale(1.05);
+}
+
+.cart-item-quantity {
+  font-size: 14px;
+  font-weight: 600;
+  min-width: 25px;
+  text-align: center;
+}
+
+.cart-total {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #4a2020;
+}
+
+.cart-total h3 {
+  font-size: 20px;
+  color: #4a2020;
+  margin-bottom: 15px;
+}
+
+.checkout-btn {
+  width: 100%;
+  padding: 12px;
+  background: #ff007b;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.checkout-btn:hover {
+  background: #e6006f;
+  transform: scale(1.02);
+  box-shadow: 0 3px 10px rgba(255, 0, 123, 0.3);
+}
+
+/* Стилизация скролла */
+.cart::-webkit-scrollbar {
+  width: 6px;
+}
+
+.cart::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.cart::-webkit-scrollbar-thumb {
+  background: #ff007b;
+  border-radius: 10px;
+}
+

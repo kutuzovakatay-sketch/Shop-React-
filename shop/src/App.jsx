@@ -1,17 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import Header from './components/header/Header'
 import Footer from './components/footer/Footer'
 import Items from './components/items/Items'
+import './index.css'
 
 function App() {
-  const [items, setItems] = useState([
+  const [items] = useState([
     {
       id: 1,
       title: 'Кардиган',
       img: 'sweater.jpg',
       desc: 'Свитер связан из пряжи Alize, размер oversize.',
-      category: 'Одежда',
-      price: '2500'
+      category: 'Свитера',
+      price: 2500
     },
     {
       id: 2,
@@ -19,7 +20,7 @@ function App() {
       img: 'hephik2.jpg',
       desc: 'Тренд сезона - чепчик с ушками. Связан из пряжи Pehorka.',
       category: 'Шапки',
-      price: '900'
+      price: 900
     },
     {
       id: 3,
@@ -27,31 +28,31 @@ function App() {
       img: 'varehki.jpg',
       desc: 'Самые нежные и теплые! Связаны из пуха норки.',
       category: 'Варежки', 
-      price: '500'
+      price: 500
     },
     {
       id: 4,
       title: 'Свитер "Shy"',
       img: 'sweater2.jpg',
       desc: 'Укороченый свитер из пуха норки.',
-      category: 'Одежда', 
-      price: '1500'
+      category: 'Свитера', 
+      price: 1500
     },
     {
       id: 5,
       title: 'Свитшот',
       img: 'sweater3.jpg',
       desc: 'Милый розовый свитер, связаный крючком 3:',
-      category: 'Одежда', 
-      price: '2050'
+      category: 'Свитера', 
+      price: 2050
     },
     {
       id: 6,
       title: 'Кроп-топ',
       img: 'sweater4.jpg',
       desc: 'Свитер с овечкой из крупной вязки.',
-      category: 'Одежда', 
-      price: '1800'
+      category: 'Свитера', 
+      price: 1800
     },
     {
       id: 7,
@@ -59,30 +60,76 @@ function App() {
       img: 'varehki.jpg',
       desc: 'Зимняя шапка из овечей шерсти.',
       category: 'Шапки', 
-      price: '850'
+      price: 850
     },
     {
       id: 8,
-      title: 'Варежки',
-      img: 'varehki.jpg',
-      desc: 'Самые нежные и теплые! Связаны из пуха норки.',
-      category: 'Варежки', 
-      price: '500'
+      title: 'Шарф "Уют"',
+      img: 'scarf.jpg',
+      desc: 'Теплый и мягкий шарф из alpaca.',
+      category: 'Шарфы', 
+      price: 1200
     },
     {
       id: 9,
-      title: 'Варежки',
-      img: 'varehki.jpg',
-      desc: 'Самые нежные и теплые! Связаны из пуха норки.',
-      category: 'Варежки', 
-      price: '500'
+      title: 'Шарф "Снежинка"',
+      img: 'scarf2.jpg',
+      desc: 'Ажурный шарф из тонкой шерсти.',
+      category: 'Шарфы', 
+      price: 1100
     }
   ])
 
+  const [cartItems, setCartItems] = useState([])
+  const [selectedCategory, setSelectedCategory] = useState('Все товары')
+  const [searchTerm, setSearchTerm] = useState('')
+
+  const onAdd = useCallback((item) => {
+    setCartItems(prevItems => {
+      const exist = prevItems.find(x => x.id === item.id)
+      if (exist) {
+        return prevItems.map(x => 
+          x.id === item.id ? { ...exist, quantity: exist.quantity + 1 } : x
+        )
+      } else {
+        return [...prevItems, { ...item, quantity: 1 }]
+      }
+    })
+  }, [])
+
+  const onRemove = useCallback((id) => {
+    setCartItems(prevItems => {
+      const exist = prevItems.find(x => x.id === id)
+      if (exist.quantity === 1) {
+        return prevItems.filter(x => x.id !== id)
+      } else {
+        return prevItems.map(x => 
+          x.id === id ? { ...exist, quantity: exist.quantity - 1 } : x
+        )
+      }
+    })
+  }, [])
+
+  const handleSearch = (term) => {
+    setSearchTerm(term)
+  }
+
   return (
     <div className="wrapper">
-      <Header />
-      <Items items = {items}/>
+      <Header 
+        cartItems={cartItems}
+        onAdd={onAdd}
+        onRemove={onRemove}
+        selectedCategory={selectedCategory}
+        onSelectCategory={setSelectedCategory}
+        onSearch={handleSearch}
+      />
+      <Items 
+        items={items} 
+        onAdd={onAdd}
+        selectedCategory={selectedCategory}
+        searchTerm={searchTerm}
+      />
       <Footer />
     </div>
   )
