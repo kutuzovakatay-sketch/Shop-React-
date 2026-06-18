@@ -3,7 +3,7 @@ import { FaShoppingCart } from 'react-icons/fa';
 import Cart from '../cart/Cart';
 import Categories from '../categories/Categories';
 import AuthModal from '../auth/AuthModal';
-import './Header.css';
+import './header.css';
 
 export default function Header({ 
   cartItems, 
