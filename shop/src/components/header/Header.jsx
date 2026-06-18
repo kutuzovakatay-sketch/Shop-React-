@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { FaShoppingCart } from 'react-icons/fa'
-import Cart from '../cart/Cart'
-import Categories from '../categories/Categories'
-import AuthModal from '../auth/AuthModal'
-import './Header.css'
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { FaShoppingCart } from 'react-icons/fa';
+import Cart from '../cart/Cart';
+import Categories from '../categories/Categories';
+import AuthModal from '../auth/AuthModal';
+import './Header.css';
 
 export default function Header({ 
   cartItems, 
@@ -13,49 +13,85 @@ export default function Header({
   onSelectCategory, 
   onSearch,
   currentPage,
-  onPageChange 
+  onPageChange,
+  user,
+  onLogout,
+  onLogin,
+  loadingCart
 }) {
   const [cartOpen, setCartOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  
   const cartRef = useRef(null);
   const cartButtonRef = useRef(null);
+  const dropdownRef = useRef(null);
   
-  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0)
-  const categories = ['Все товары', 'Свитера', 'Шапки', 'Шарфы', 'Варежки']
+  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const categories = ['Все товары', 'Свитера', 'Шапки', 'Шарфы', 'Варежки'];
 
   const handleSearchChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
     onSearch(value);
-  }
+  };
 
+  // Закрываем дропдаун при клике вне него
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Закрываем корзину при клике вне
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (cartRef.current && 
           !cartRef.current.contains(event.target) &&
           cartButtonRef.current && 
           !cartButtonRef.current.contains(event.target)) {
-        setCartOpen(false)
+        setCartOpen(false);
       }
-    }
+    };
 
     if (cartOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
+      document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [cartOpen])
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [cartOpen]);
 
   const toggleCart = useCallback(() => {
-    setCartOpen(prev => !prev)
-  }, [])
+    setCartOpen(prev => !prev);
+  }, []);
 
   const handleProfileClick = () => {
-    setIsAuthOpen(true)
-  }
+    if (user) {
+      setIsDropdownOpen(!isDropdownOpen);
+    } else {
+      setIsAuthOpen(true);
+    }
+  };
+
+  const handleLogout = () => {
+    setIsDropdownOpen(false);
+    onLogout(); // ← вызываем функцию из App
+  };
+
+  const handleLogin = (userData) => {
+    onLogin(userData);
+    setIsAuthOpen(false);
+  };
 
   return (
     <header>
@@ -89,8 +125,21 @@ export default function Header({
             <li 
               onClick={handleProfileClick}
               className={isAuthOpen ? 'active' : ''}
+              ref={dropdownRef}
             >
-              Личный кабинет
+              {user ? ` ${user.name}` : 'Личный кабинет'}
+              
+              {user && isDropdownOpen && (
+                <div className="user-dropdown">
+                  <div className="dropdown-item">
+                    <span className="dropdown-email">{user.email}</span>
+                  </div>
+                  <div className="dropdown-divider"></div>
+                  <div className="dropdown-item logout" onClick={handleLogout}>
+                    <span>Выйти</span>
+                  </div>
+                </div>
+              )}
             </li>
           </ul>
           
@@ -100,8 +149,12 @@ export default function Header({
                 onClick={toggleCart}
                 className={`shop-cart-button ${cartOpen ? 'active' : ''}`}
               />
-              {totalItems > 0 && (
-                <span className="cart-badge">{totalItems}</span>
+              {loadingCart ? (
+                <span className="cart-badge loading">...</span>
+              ) : (
+                totalItems > 0 && (
+                  <span className="cart-badge">{totalItems}</span>
+                )
               )}
             </div>
           )}
@@ -132,11 +185,11 @@ export default function Header({
         </div>
       )}
 
-      {/* Модальное окно авторизации */}
       <AuthModal 
         isOpen={isAuthOpen} 
-        onClose={() => setIsAuthOpen(false)} 
+        onClose={() => setIsAuthOpen(false)}
+        onLogin={handleLogin}
       />
     </header>
-  )
+  );
 }

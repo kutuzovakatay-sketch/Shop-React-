@@ -209,3 +209,90 @@ header .presentasion::before {
   color: #ff007b;
 }
 
+.right-section ul.nav li {
+  position: relative;
+  cursor: pointer;
+}
+
+.user-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 10px;
+  min-width: 200px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  padding: 8px 0;
+  z-index: 1000;
+  animation: dropdownFadeIn 0.2s ease;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.user-dropdown .dropdown-item {
+  padding: 10px 20px;
+  font-size: 14px;
+  color: #333;
+  transition: background 0.2s ease;
+  cursor: default;
+}
+
+.user-dropdown .dropdown-item:hover {
+  background: #f9f9f9;
+}
+
+.user-dropdown .dropdown-item.logout {
+  cursor: pointer;
+  color: #ff4444;
+}
+
+.user-dropdown .dropdown-item.logout:hover {
+  background: #fff0f0;
+  color: #cc0000;
+}
+
+.user-dropdown .dropdown-email {
+  color: #999;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.user-dropdown .dropdown-divider {
+  height: 1px;
+  background: #eee;
+  margin: 4px 16px;
+}
+
+/* Стрелка для дропдауна */
+.user-dropdown::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  right: 20px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 8px solid white;
+  filter: drop-shadow(0 -2px 4px rgba(0, 0, 0, 0.05));
+}
+.cart-badge.loading {
+  background: #999;
+  font-size: 10px;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}

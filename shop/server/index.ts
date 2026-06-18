@@ -1,22 +1,20 @@
-import express, { Application, Request, Response } from 'express';
+import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import pool from './utils/database';
 import authRoutes from './routes/authRoutes';
-import productRoutes from './routes/productRoutes';
-import cartRoutes from './routes/cartRoutes';
+import cartRoutes from './routes/cartRoutes'; // ← Эта строка должна быть
 
 dotenv.config();
 
-const app: Application = express();
+const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
 // Проверка подключения к БД
-app.get('/api/health', async (req: Request, res: Response) => {
+app.get('/api/health', async (req, res) => {
   try {
     const result = await pool.query('SELECT NOW()');
     res.json({ status: 'OK', time: result.rows[0].now });
@@ -27,9 +25,8 @@ app.get('/api/health', async (req: Request, res: Response) => {
 
 // Маршруты
 app.use('/api/auth', authRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/cart', cartRoutes);
+app.use('/api/cart', cartRoutes); // ← Убедитесь, что эта строка есть!
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });

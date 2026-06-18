@@ -1,17 +1,17 @@
-import React, { memo } from 'react'
-import './Cart.css'
+import React from 'react';
+import './Cart.css';
 
-function Cart({ cartItems, onAdd, onRemove }) {
-  const totalPrice = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+export default function Cart({ cartItems, onAdd, onRemove }) {
+  const totalPrice = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-  // Если корзина пуста, показываем быстро
   if (cartItems.length === 0) {
     return (
       <div className="cart">
         <h2>Корзина</h2>
         <p className="empty-cart">Корзина пуста :3</p>
+        <p className="empty-cart-hint">Добавьте товары, чтобы они появились здесь</p>
       </div>
-    )
+    );
   }
 
   return (
@@ -36,7 +36,5 @@ function Cart({ cartItems, onAdd, onRemove }) {
         <button className="checkout-btn">Оформить заказ</button>
       </div>
     </div>
-  )
+  );
 }
-
-export default memo(Cart) // Оборачиваем Cart в memo

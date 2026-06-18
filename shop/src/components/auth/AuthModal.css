@@ -224,6 +224,24 @@
   border-radius: 10px;
 }
 
+/* Добавьте в конец файла */
+.auth-error {
+  background: #fee;
+  border: 1px solid #ff4444;
+  color: #cc0000;
+  padding: 12px 20px;
+  border-radius: 10px;
+  margin: 0 40px 15px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.auth-submit:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
 /* Адаптивность */
 @media (max-width: 768px) {
   .auth-modal {

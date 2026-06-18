@@ -1,98 +1,128 @@
-import React, { useState } from 'react'
-import './AuthModal.css'
+import React, { useState } from 'react';
+import axios from 'axios';
+import './AuthModal.css';
 
-export default function AuthModal({ isOpen, onClose }) {
-  const [isLogin, setIsLogin] = useState(true) // true - вход, false - регистрация
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+
+export default function AuthModal({ isOpen, onClose, onLogin }) {
+  const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
+    name: '',
     email: '',
     password: '',
-    name: '',
     confirmPassword: ''
-  })
-  const [errors, setErrors] = useState({})
+  });
+  const [errors, setErrors] = useState({});
+  const [loading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState('');
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value
-    })
-    // Очищаем ошибку при вводе
+    });
     if (errors[e.target.name]) {
       setErrors({
         ...errors,
         [e.target.name]: ''
-      })
+      });
     }
-  }
+    setServerError('');
+  };
 
   const validateForm = () => {
-    const newErrors = {}
+    const newErrors = {};
+    
+    if (!isLogin && !formData.name) {
+      newErrors.name = 'Введите ваше имя';
+    }
     
     if (!formData.email) {
-      newErrors.email = 'Введите email'
+      newErrors.email = 'Введите email';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Некорректный email'
+      newErrors.email = 'Некорректный email';
     }
     
     if (!formData.password) {
-      newErrors.password = 'Введите пароль'
+      newErrors.password = 'Введите пароль';
     } else if (formData.password.length < 4) {
-      newErrors.password = 'Пароль должен быть не менее 4 символов'
+      newErrors.password = 'Пароль должен быть не менее 4 символов';
     }
     
     if (!isLogin) {
-      if (!formData.name) {
-        newErrors.name = 'Введите ваше имя'
+      if (formData.password !== formData.confirmPassword) {
+        newErrors.confirmPassword = 'Пароли не совпадают';
+      }
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setServerError('');
+    
+    if (!validateForm()) return;
+    
+    setLoading(true);
+    
+    try {
+      let response;
+      
+      if (isLogin) {
+        // Вход
+        response = await axios.post(`${API_URL}/auth/login`, {
+          email: formData.email,
+          password: formData.password
+        });
+      } else {
+        // Регистрация
+        response = await axios.post(`${API_URL}/auth/register`, {
+          name: formData.name,
+          email: formData.email,
+          password: formData.password
+        });
       }
       
-      if (formData.password !== formData.confirmPassword) {
-        newErrors.confirmPassword = 'Пароли не совпадают'
-      }
-    }
-    
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    
-    if (validateForm()) {
-      if (isLogin) {
-        // Логика входа
-        console.log('Вход:', formData.email, formData.password)
-        // Здесь можно добавить запрос к API
-        alert(`Добро пожаловать назад, ${formData.email}!`)
-        onClose()
-      } else {
-        // Логика регистрации
-        console.log('Регистрация:', formData)
-        // Здесь можно добавить запрос к API
-        alert(`Регистрация успешна! Добро пожаловать, ${formData.name}!`)
-        onClose()
-      }
+      // Сохраняем токен
+      const { token, user } = response.data;
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', JSON.stringify(user));
+      
+      // Закрываем окно и передаём данные наверх
+      onLogin(user);
+      onClose();
+      
       // Очищаем форму
       setFormData({
+        name: '',
         email: '',
         password: '',
-        name: '',
         confirmPassword: ''
-      })
+      });
+      
+    } catch (error) {
+      console.error('❌ Ошибка:', error);
+      setServerError(error.response?.data?.message || 'Ошибка сервера');
+    } finally {
+      setLoading(false);
     }
-  }
+  };
 
   const switchMode = () => {
-    setIsLogin(!isLogin)
-    setErrors({})
+    setIsLogin(!isLogin);
+    setErrors({});
+    setServerError('');
     setFormData({
+      name: '',
       email: '',
       password: '',
-      name: '',
       confirmPassword: ''
-    })
-  }
+    });
+  };
 
   return (
     <div className="auth-overlay" onClick={onClose}>
@@ -103,6 +133,10 @@ export default function AuthModal({ isOpen, onClose }) {
           <h2>{isLogin ? 'Вход в аккаунт' : 'Регистрация'}</h2>
           <p>{isLogin ? 'Рады видеть вас снова!' : 'Создайте новый аккаунт'}</p>
         </div>
+        
+        {serverError && (
+          <div className="auth-error">{serverError}</div>
+        )}
         
         <form onSubmit={handleSubmit} className="auth-form">
           {!isLogin && (
@@ -161,8 +195,8 @@ export default function AuthModal({ isOpen, onClose }) {
             </div>
           )}
           
-          <button type="submit" className="auth-submit">
-            {isLogin ? 'Войти' : 'Зарегистрироваться'}
+          <button type="submit" className="auth-submit" disabled={loading}>
+            {loading ? 'Загрузка...' : (isLogin ? 'Войти' : 'Зарегистрироваться')}
           </button>
         </form>
         
@@ -174,15 +208,8 @@ export default function AuthModal({ isOpen, onClose }) {
             </button>
           </p>
         </div>
-        
-        {isLogin && (
-          <div className="auth-demo">
-            <p>Демо-доступ:</p>
-            <p>Email: demo@example.com</p>
-            <p>Пароль: 1234</p>
-          </div>
-        )}
+      
       </div>
     </div>
-  )
+  );
 }
