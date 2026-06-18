@@ -4,13 +4,14 @@ import Header from './components/header/Header';
 import Footer from './components/footer/Footer';
 import Items from './components/items/Items';
 import Contacts from './components/contacts/Contacts';
+import AdminPanel from './components/admin/AdminPanel';
 import './index.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 function App() {
   // Товары (локально в JSON)
-  const [items] = useState([
+  const [items, setItems] = useState([
     {
       id: 1,
       title: 'Кардиган',
@@ -91,8 +92,14 @@ function App() {
   const [currentPage, setCurrentPage] = useState('shop');
   const [user, setUser] = useState(null);
   const [loadingCart, setLoadingCart] = useState(false);
+  
+  // Состояние для редактирования товара
+  const [editingProduct, setEditingProduct] = useState(null);
 
-  // Получаем токен из localStorage
+  // Проверяем, является ли пользователь админом
+  const isAdmin = user?.isAdmin === true;
+  console.log('🔑 isAdmin:', isAdmin);
+
   const getToken = () => localStorage.getItem('token');
 
   // Загрузка корзины из БД
@@ -109,7 +116,6 @@ function App() {
         headers: { Authorization: `Bearer ${token}` }
       });
       
-      // Преобразуем данные из БД в формат корзины
       const cartFromDB = response.data.map(item => {
         const product = items.find(p => p.id === item.product_id);
         return {
@@ -124,7 +130,6 @@ function App() {
       setCartItems(cartFromDB);
     } catch (error) {
       console.error('❌ Ошибка загрузки корзины:', error);
-      // Если ошибка авторизации, очищаем корзину
       if (error.response?.status === 401) {
         setCartItems([]);
       }
@@ -133,7 +138,6 @@ function App() {
     }
   }, [items]);
 
-  // Загружаем корзину при входе пользователя
   useEffect(() => {
     const token = getToken();
     const userData = localStorage.getItem('user');
@@ -150,22 +154,18 @@ function App() {
   // Добавление товара в корзину
   const onAdd = useCallback(async (item) => {
     const token = getToken();
-    
     if (!token) {
-      // Если не авторизованы — показываем сообщение
       alert('Пожалуйста, войдите в аккаунт, чтобы добавить товары в корзину');
       return;
     }
 
     try {
-      // Отправляем запрос на сервер
       await axios.post(
         `${API_URL}/cart`,
         { productId: item.id, quantity: 1 },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
-      // Обновляем локальное состояние
       setCartItems(prev => {
         const exist = prev.find(x => x.id === item.id);
         if (exist) {
@@ -177,11 +177,7 @@ function App() {
       });
     } catch (error) {
       console.error('❌ Ошибка добавления в корзину:', error);
-      if (error.response?.status === 401) {
-        alert('Сессия истекла. Пожалуйста, войдите заново.');
-      } else {
-        alert('Ошибка добавления в корзину');
-      }
+      alert('Ошибка добавления в корзину');
     }
   }, []);
 
@@ -191,17 +187,13 @@ function App() {
     if (!token) return;
 
     try {
-      // Находим товар в корзине
       const item = cartItems.find(x => x.id === id);
-      
       if (item.quantity === 1) {
-        // Удаляем полностью
         await axios.delete(`${API_URL}/cart/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setCartItems(prev => prev.filter(x => x.id !== id));
       } else {
-        // Уменьшаем количество
         await axios.put(
           `${API_URL}/cart/${id}`,
           { quantity: item.quantity - 1 },
@@ -218,24 +210,62 @@ function App() {
     }
   }, [cartItems]);
 
-  // Очистка корзины при выходе
+  // Выход из аккаунта
   const handleLogout = useCallback(() => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setUser(null);
-    setCartItems([]); // Очищаем корзину
+    setCartItems([]);
   }, []);
 
-  // Обработчик входа
+  // Вход в аккаунт
   const handleLogin = useCallback((userData) => {
     setUser(userData);
-    loadCart(); // Загружаем корзину после входа
+    loadCart();
   }, [loadCart]);
 
+  // ----- АДМИН ФУНКЦИИ -----
+  
+  // Добавление товара
+  const handleAddProduct = (newProduct) => {
+    console.log('➕ Добавление товара:', newProduct);
+    setItems(prev => [...prev, newProduct]);
+  };
+
+  // Открытие окна редактирования
+  const openEditModal = (product) => {
+    console.log('✏️ Открываем редактирование:', product);
+    setEditingProduct(product);
+  };
+
+  // Закрытие окна редактирования
+  const closeEditModal = () => {
+    setEditingProduct(null);
+  };
+
+  // Редактирование товара
+  const handleEditProduct = (updatedProduct) => {
+    console.log('🔄 Обновление товара:', updatedProduct);
+    setItems(prev => prev.map(item => 
+      item.id === updatedProduct.id ? updatedProduct : item
+    ));
+    closeEditModal();
+  };
+
+  // Удаление товара
+  const handleDeleteProduct = (productId) => {
+    console.log('🗑️ Удаление товара:', productId);
+    if (window.confirm('Вы уверены, что хотите удалить этот товар?')) {
+      setItems(prev => prev.filter(item => item.id !== productId));
+    }
+  };
+
+  // Поиск
   const handleSearch = (term) => {
     setSearchTerm(term);
   };
 
+  // Смена страницы
   const handlePageChange = (page) => {
     setCurrentPage(page);
     if (page === 'shop') {
@@ -260,16 +290,120 @@ function App() {
         onLogin={handleLogin}
         loadingCart={loadingCart}
       />
+      
       {currentPage === 'shop' ? (
-        <Items
-          items={items}
-          onAdd={onAdd}
-          selectedCategory={selectedCategory}
-          searchTerm={searchTerm}
-        />
+        <>
+          {/* Админ панель - только добавление и удаление */}
+          {isAdmin && (
+            <AdminPanel 
+              items={items}
+              onAddProduct={handleAddProduct}
+              onDeleteProduct={handleDeleteProduct}
+            />
+          )}
+          
+          {/* Список товаров */}
+          <Items
+            items={items}
+            onAdd={onAdd}
+            selectedCategory={selectedCategory}
+            searchTerm={searchTerm}
+            isAdmin={isAdmin}
+            onEdit={openEditModal}
+            onDelete={handleDeleteProduct}
+          />
+
+          {/* Модальное окно редактирования товара (вне AdminPanel) */}
+          {editingProduct && (
+            <div className="admin-modal-overlay" onClick={closeEditModal}>
+              <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
+                <button className="modal-close" onClick={closeEditModal}>×</button>
+                <h2>✏️ Редактирование товара</h2>
+                <p className="edit-hint">Редактируем: <strong>{editingProduct.title}</strong></p>
+                
+                <form onSubmit={(e) => {
+                  e.preventDefault();
+                  const form = e.target;
+                  const formData = new FormData(form);
+                  const updatedProduct = {
+                    id: editingProduct.id,
+                    title: formData.get('title'),
+                    img: formData.get('img'),
+                    desc: formData.get('desc'),
+                    category: formData.get('category'),
+                    price: parseInt(formData.get('price'))
+                  };
+                  handleEditProduct(updatedProduct);
+                }}>
+                  <div className="form-group">
+                    <label>Название</label>
+                    <input
+                      type="text"
+                      name="title"
+                      placeholder="Введите название"
+                      defaultValue={editingProduct.title}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Изображение</label>
+                    <div className="image-upload-wrapper">
+                      <input
+                        type="text"
+                        name="img"
+                        placeholder="sweater.jpg"
+                        defaultValue={editingProduct.img}
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label>Описание</label>
+                    <textarea
+                      name="desc"
+                      placeholder="Описание товара"
+                      defaultValue={editingProduct.desc}
+                      required
+                    />
+                  </div>
+
+                  <div className="form-row">
+                    <div className="form-group half">
+                      <label>Категория</label>
+                      <select name="category" defaultValue={editingProduct.category} required>
+                        {['Свитера', 'Шапки', 'Шарфы', 'Варежки'].map(cat => (
+                          <option key={cat} value={cat}>{cat}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="form-group half">
+                      <label>Цена (₽)</label>
+                      <input
+                        type="number"
+                        name="price"
+                        placeholder="0"
+                        defaultValue={editingProduct.price}
+                        required
+                        min="0"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="modal-actions">
+                    <button type="submit" className="submit-btn">Сохранить изменения</button>
+                    <button type="button" className="cancel-btn" onClick={closeEditModal}>Отмена</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+        </>
       ) : (
         <Contacts />
       )}
+      
       <Footer />
     </div>
   );

@@ -1,20 +1,22 @@
-import React, { Component } from 'react'
-import Item from '../item/Item'
-import './Items.css'
+import React, { Component } from 'react';
+import Item from '../item/Item';
+import './Items.css';
 
 export class Items extends Component {
   render() {
-    // Сначала фильтруем по категории
-    let filteredItems = this.props.selectedCategory === 'Все товары' 
-      ? this.props.items 
-      : this.props.items.filter(item => item.category === this.props.selectedCategory)
+    const { items, onAdd, selectedCategory, searchTerm, isAdmin, onEdit, onDelete } = this.props;
     
-    // Затем фильтруем по поисковому запросу
-    if (this.props.searchTerm) {
+    let filteredItems = selectedCategory === 'Все товары' 
+      ? items 
+      : items.filter(item => item.category === selectedCategory);
+    
+    if (searchTerm) {
       filteredItems = filteredItems.filter(item => 
-        item.title.toLowerCase().includes(this.props.searchTerm.toLowerCase())
-      )
+        item.title.toLowerCase().includes(searchTerm.toLowerCase())
+      );
     }
+
+    console.log('📦 Items props:', { isAdmin, onEdit, onDelete }); // ← Добавьте для проверки
 
     return (
       <main>
@@ -28,13 +30,16 @@ export class Items extends Component {
             <Item 
               key={el.id} 
               item={el} 
-              onAdd={this.props.onAdd}
+              onAdd={onAdd}
+              isAdmin={isAdmin}
+              onEdit={onEdit}
+              onDelete={onDelete}
             />
           ))
         )}
       </main>
-    )
+    );
   }
 }
 
-export default Items
+export default Items;
