@@ -10,99 +10,40 @@ import './index.css';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 function App() {
-  // Товары (локально в JSON)
-  const [items, setItems] = useState([
-    {
-      id: 1,
-      title: 'Кардиган',
-      img: 'sweater.jpg',
-      desc: 'Свитер связан из пряжи Alize, размер oversize.',
-      category: 'Свитера',
-      price: 2500
-    },
-    {
-      id: 2,
-      title: 'Чепчик',
-      img: 'hephik2.jpg',
-      desc: 'Тренд сезона - чепчик с ушками. Связан из пряжи Pehorka.',
-      category: 'Шапки',
-      price: 900
-    },
-    {
-      id: 3,
-      title: 'Варежки',
-      img: 'varehki.jpg',
-      desc: 'Самые нежные и теплые! Связаны из пуха норки.',
-      category: 'Варежки', 
-      price: 500
-    },
-    {
-      id: 4,
-      title: 'Свитер "Shy"',
-      img: 'sweater2.jpg',
-      desc: 'Укороченый свитер из пуха норки.',
-      category: 'Свитера', 
-      price: 1500
-    },
-    {
-      id: 5,
-      title: 'Свитшот',
-      img: 'sweater3.jpg',
-      desc: 'Милый розовый свитер, связаный крючком 3:',
-      category: 'Свитера', 
-      price: 2050
-    },
-    {
-      id: 6,
-      title: 'Кроп-топ',
-      img: 'sweater4.jpg',
-      desc: 'Свитер с овечкой из крупной вязки.',
-      category: 'Свитера', 
-      price: 1800
-    },
-    {
-      id: 7,
-      title: 'Шапка',
-      img: 'hat.jpg',
-      desc: 'Зимняя шапка из овечей шерсти.',
-      category: 'Шапки', 
-      price: 850
-    },
-    {
-      id: 8,
-      title: 'Шарф "Уют"',
-      img: 'scarf.jpg',
-      desc: 'Теплый и мягкий шарф из alpaca.',
-      category: 'Шарфы', 
-      price: 1200
-    },
-    {
-      id: 9,
-      title: 'Шарф "Снежинка"',
-      img: 'scarf2.jpg',
-      desc: 'Ажурный шарф из тонкой шерсти.',
-      category: 'Шарфы', 
-      price: 1100
-    }
-  ]);
-
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [cartItems, setCartItems] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('Все товары');
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState('shop');
   const [user, setUser] = useState(null);
   const [loadingCart, setLoadingCart] = useState(false);
-  
-  // Состояние для редактирования товара
   const [editingProduct, setEditingProduct] = useState(null);
+  const [editFormData, setEditFormData] = useState({
+    title: '',
+    img: '',
+    description: '',
+    category: '',
+    price: ''
+  });
 
-  // Проверяем, является ли пользователь админом
   const isAdmin = user?.isAdmin === true;
-  console.log('🔑 isAdmin:', isAdmin);
-
   const getToken = () => localStorage.getItem('token');
 
-  // Загрузка корзины из БД
+  
+  const loadProducts = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${API_URL}/products`);
+      setItems(response.data);
+    } catch (error) {
+      console.error(' Ошибка загрузки товаров:', error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Загрузка корзины
   const loadCart = useCallback(async () => {
     const token = getToken();
     if (!token) {
@@ -129,7 +70,7 @@ function App() {
       
       setCartItems(cartFromDB);
     } catch (error) {
-      console.error('❌ Ошибка загрузки корзины:', error);
+      console.error(' Ошибка загрузки корзины:', error);
       if (error.response?.status === 401) {
         setCartItems([]);
       }
@@ -137,6 +78,10 @@ function App() {
       setLoadingCart(false);
     }
   }, [items]);
+
+  useEffect(() => {
+    loadProducts();
+  }, [loadProducts]);
 
   useEffect(() => {
     const token = getToken();
@@ -151,11 +96,11 @@ function App() {
     }
   }, [loadCart]);
 
-  // Добавление товара в корзину
+  
   const onAdd = useCallback(async (item) => {
     const token = getToken();
     if (!token) {
-      alert('Пожалуйста, войдите в аккаунт, чтобы добавить товары в корзину');
+      alert('Пожалуйста, войдите в аккаунт');
       return;
     }
 
@@ -176,12 +121,11 @@ function App() {
         return [...prev, { ...item, quantity: 1 }];
       });
     } catch (error) {
-      console.error('❌ Ошибка добавления в корзину:', error);
+      console.error(' Ошибка добавления в корзину:', error);
       alert('Ошибка добавления в корзину');
     }
   }, []);
 
-  // Удаление товара из корзины
   const onRemove = useCallback(async (id) => {
     const token = getToken();
     if (!token) return;
@@ -206,11 +150,115 @@ function App() {
         );
       }
     } catch (error) {
-      console.error('❌ Ошибка удаления из корзины:', error);
+      console.error(' Ошибка удаления из корзины:', error);
     }
   }, [cartItems]);
 
-  // Выход из аккаунта
+  
+  const handleAddProduct = async (newProduct) => {
+    try {
+      const token = getToken();
+      const response = await axios.post(
+        `${API_URL}/products`,
+        newProduct,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setItems(prev => [...prev, response.data]);
+    } catch (error) {
+      console.error(' Ошибка добавления товара:', error);
+      alert('Ошибка добавления товара');
+    }
+  };
+
+  const handleEditProduct = async (updatedProduct) => {
+    try {
+      const token = getToken();
+      const response = await axios.put(
+        `${API_URL}/products/${updatedProduct.id}`,
+        updatedProduct,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setItems(prev => prev.map(item => 
+        item.id === updatedProduct.id ? response.data : item
+      ));
+      setEditingProduct(null);
+    } catch (error) {
+      console.error(' Ошибка обновления товара:', error);
+      alert('Ошибка обновления товара');
+    }
+  };
+
+  const handleDeleteProduct = async (productId) => {
+    if (!window.confirm('Вы уверены, что хотите удалить этот товар?')) return;
+    
+    try {
+      const token = getToken();
+      await axios.delete(`${API_URL}/products/${productId}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setItems(prev => prev.filter(item => item.id !== productId));
+    } catch (error) {
+      console.error(' Ошибка удаления товара:', error);
+      alert('Ошибка удаления товара');
+    }
+  };
+
+  
+  const openEditModal = (product) => {
+    setEditingProduct(product);
+    setEditFormData({
+      title: product.title || '',
+      img: product.img || '',
+      description: product.description || '',
+      category: product.category || '',
+      price: product.price ? product.price.toString() : ''
+    });
+  };
+
+  const closeEditModal = () => {
+    setEditingProduct(null);
+    setEditFormData({
+      title: '',
+      img: '',
+      description: '',
+      category: '',
+      price: ''
+    });
+  };
+
+  
+  const handleEditImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setEditFormData({
+        ...editFormData,
+        img: file.name
+      });
+    }
+  };
+
+  
+  const handleEditInputChange = (e) => {
+    setEditFormData({
+      ...editFormData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  
+  const handleEditSubmit = (e) => {
+    e.preventDefault();
+    const updatedProduct = {
+      id: editingProduct.id,
+      title: editFormData.title,
+      img: editFormData.img,
+      description: editFormData.description,
+      category: editFormData.category,
+      price: parseInt(editFormData.price)
+    };
+    handleEditProduct(updatedProduct);
+  };
+
   const handleLogout = useCallback(() => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -218,54 +266,15 @@ function App() {
     setCartItems([]);
   }, []);
 
-  // Вход в аккаунт
   const handleLogin = useCallback((userData) => {
     setUser(userData);
     loadCart();
   }, [loadCart]);
 
-  // ----- АДМИН ФУНКЦИИ -----
-  
-  // Добавление товара
-  const handleAddProduct = (newProduct) => {
-    console.log('➕ Добавление товара:', newProduct);
-    setItems(prev => [...prev, newProduct]);
-  };
-
-  // Открытие окна редактирования
-  const openEditModal = (product) => {
-    console.log('✏️ Открываем редактирование:', product);
-    setEditingProduct(product);
-  };
-
-  // Закрытие окна редактирования
-  const closeEditModal = () => {
-    setEditingProduct(null);
-  };
-
-  // Редактирование товара
-  const handleEditProduct = (updatedProduct) => {
-    console.log('🔄 Обновление товара:', updatedProduct);
-    setItems(prev => prev.map(item => 
-      item.id === updatedProduct.id ? updatedProduct : item
-    ));
-    closeEditModal();
-  };
-
-  // Удаление товара
-  const handleDeleteProduct = (productId) => {
-    console.log('🗑️ Удаление товара:', productId);
-    if (window.confirm('Вы уверены, что хотите удалить этот товар?')) {
-      setItems(prev => prev.filter(item => item.id !== productId));
-    }
-  };
-
-  // Поиск
   const handleSearch = (term) => {
     setSearchTerm(term);
   };
 
-  // Смена страницы
   const handlePageChange = (page) => {
     setCurrentPage(page);
     if (page === 'shop') {
@@ -273,6 +282,16 @@ function App() {
       setSelectedCategory('Все товары');
     }
   };
+
+  if (loading) {
+    return (
+      <div className="wrapper">
+        <div style={{ textAlign: 'center', padding: '100px 0' }}>
+          <h2>Загрузка товаров...</h2>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="wrapper">
@@ -293,7 +312,6 @@ function App() {
       
       {currentPage === 'shop' ? (
         <>
-          {/* Админ панель - только добавление и удаление */}
           {isAdmin && (
             <AdminPanel 
               items={items}
@@ -302,7 +320,6 @@ function App() {
             />
           )}
           
-          {/* Список товаров */}
           <Items
             items={items}
             onAdd={onAdd}
@@ -313,35 +330,23 @@ function App() {
             onDelete={handleDeleteProduct}
           />
 
-          {/* Модальное окно редактирования товара (вне AdminPanel) */}
+          {/* МОДАЛЬНОЕ ОКНО РЕДАКТИРОВАНИЯ (с выбором файла) */}
           {editingProduct && (
             <div className="admin-modal-overlay" onClick={closeEditModal}>
               <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
                 <button className="modal-close" onClick={closeEditModal}>×</button>
-                <h2>✏️ Редактирование товара</h2>
+                <h2> Редактирование товара</h2>
                 <p className="edit-hint">Редактируем: <strong>{editingProduct.title}</strong></p>
                 
-                <form onSubmit={(e) => {
-                  e.preventDefault();
-                  const form = e.target;
-                  const formData = new FormData(form);
-                  const updatedProduct = {
-                    id: editingProduct.id,
-                    title: formData.get('title'),
-                    img: formData.get('img'),
-                    desc: formData.get('desc'),
-                    category: formData.get('category'),
-                    price: parseInt(formData.get('price'))
-                  };
-                  handleEditProduct(updatedProduct);
-                }}>
+                <form onSubmit={handleEditSubmit}>
                   <div className="form-group">
                     <label>Название</label>
                     <input
                       type="text"
                       name="title"
                       placeholder="Введите название"
-                      defaultValue={editingProduct.title}
+                      value={editFormData.title}
+                      onChange={handleEditInputChange}
                       required
                     />
                   </div>
@@ -353,18 +358,37 @@ function App() {
                         type="text"
                         name="img"
                         placeholder="sweater.jpg"
-                        defaultValue={editingProduct.img}
+                        value={editFormData.img}
+                        onChange={handleEditInputChange}
                         required
                       />
+                      <div className="file-upload-btn">
+                        <label htmlFor="file-upload-edit" className="file-label">
+                          📁 Выбрать файл
+                        </label>
+                        <input
+                          id="file-upload-edit"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleEditImageUpload}
+                          className="file-input-hidden"
+                        />
+                      </div>
                     </div>
+                    {editFormData.img && (
+                      <div className="image-preview">
+                        <span> {editFormData.img}</span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="form-group">
                     <label>Описание</label>
                     <textarea
-                      name="desc"
+                      name="description"
                       placeholder="Описание товара"
-                      defaultValue={editingProduct.desc}
+                      value={editFormData.description}
+                      onChange={handleEditInputChange}
                       required
                     />
                   </div>
@@ -372,7 +396,12 @@ function App() {
                   <div className="form-row">
                     <div className="form-group half">
                       <label>Категория</label>
-                      <select name="category" defaultValue={editingProduct.category} required>
+                      <select
+                        name="category"
+                        value={editFormData.category}
+                        onChange={handleEditInputChange}
+                        required
+                      >
                         {['Свитера', 'Шапки', 'Шарфы', 'Варежки'].map(cat => (
                           <option key={cat} value={cat}>{cat}</option>
                         ))}
@@ -384,7 +413,8 @@ function App() {
                         type="number"
                         name="price"
                         placeholder="0"
-                        defaultValue={editingProduct.price}
+                        value={editFormData.price}
+                        onChange={handleEditInputChange}
                         required
                         min="0"
                       />

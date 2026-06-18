@@ -16,7 +16,7 @@ export class Items extends Component {
       );
     }
 
-    console.log('📦 Items props:', { isAdmin, onEdit, onDelete }); // ← Добавьте для проверки
+    console.log(' Items props:', { isAdmin, onEdit, onDelete }); 
 
     return (
       <main>

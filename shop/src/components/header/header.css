@@ -1,4 +1,4 @@
-/* Контейнер для всей шапки */
+
 .header-container {
   display: flex;
   justify-content: space-between;
@@ -8,7 +8,7 @@
   width: 100%;
 }
 
-/* Левая секция с логотипом и поиском */
+
 .logo-section {
   display: flex;
   align-items: center;
@@ -47,7 +47,7 @@
   font-size: 14px;
 }
 
-/* Анимация для результатов поиска */
+
 @keyframes searchPulse {
   0% {
     transform: scale(1);
@@ -64,7 +64,7 @@
   animation: searchPulse 0.5s ease;
 }
 
-/* Правая секция с меню и корзиной */
+
 .right-section {
   display: flex;
   align-items: center;
@@ -130,7 +130,7 @@
   font-weight: bold;
 }
 
-/* Презентационный баннер - только для главной страницы */
+
 header .presentasion {
   margin: 30px 0;
   background: url(/src/img/presentasion.jpg) no-repeat;

@@ -24,3 +24,24 @@ export const authenticate = async (
     return res.status(401).json({ message: 'Не авторизован' });
   }
 };
+
+// Middleware для проверки прав администратора
+export const isAdmin = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: 'Не авторизован' });
+    }
+    
+    if (!req.user.isAdmin) {
+      return res.status(403).json({ message: 'Доступ запрещён. Только для администраторов' });
+    }
+    
+    next();
+  } catch (error) {
+    return res.status(403).json({ message: 'Доступ запрещён' });
+  }
+};

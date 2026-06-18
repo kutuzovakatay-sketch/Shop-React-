@@ -4,7 +4,7 @@ import { getAllUsers, deleteUser } from '../controllers/adminController';
 
 const router = Router();
 
-// Все маршруты требуют авторизации и прав админа
+
 router.use(authenticate);
 router.use(isAdmin);
 

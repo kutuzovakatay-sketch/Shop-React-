@@ -144,7 +144,7 @@
   box-shadow: 0 3px 10px rgba(255, 0, 123, 0.3);
 }
 
-/* Стилизация скролла */
+
 .cart::-webkit-scrollbar {
   width: 6px;
 }

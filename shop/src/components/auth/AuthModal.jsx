@@ -92,7 +92,7 @@ export default function AuthModal({ isOpen, onClose, onLogin }) {
       localStorage.setItem('token', token);
       localStorage.setItem('user', JSON.stringify(user));
       
-      // Закрываем окно и передаём данные наверх
+      
       onLogin(user);
       onClose();
       
@@ -105,7 +105,7 @@ export default function AuthModal({ isOpen, onClose, onLogin }) {
       });
       
     } catch (error) {
-      console.error('❌ Ошибка:', error);
+      console.error(' Ошибка:', error);
       setServerError(error.response?.data?.message || 'Ошибка сервера');
     } finally {
       setLoading(false);

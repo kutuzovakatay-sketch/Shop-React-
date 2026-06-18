@@ -14,7 +14,7 @@ export const getCart = async (req: AuthRequest, res: Response) => {
     
     res.json(result.rows);
   } catch (error) {
-    console.error('❌ Ошибка получения корзины:', error);
+    console.error(' Ошибка получения корзины:', error);
     res.status(500).json({ message: 'Ошибка сервера' });
   }
 };
@@ -52,7 +52,7 @@ export const addToCart = async (req: AuthRequest, res: Response) => {
     
     res.status(201).json(result.rows[0]);
   } catch (error) {
-    console.error('❌ Ошибка добавления в корзину:', error);
+    console.error(' Ошибка добавления в корзину:', error);
     res.status(500).json({ message: 'Ошибка сервера' });
   }
 };
@@ -61,7 +61,7 @@ export const addToCart = async (req: AuthRequest, res: Response) => {
 export const updateCartItem = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user.id;
-    // Исправлено: правильно получаем productId
+    
     const productId = parseInt(req.params.productId as string);
     const { quantity } = req.body;
     
@@ -92,7 +92,7 @@ export const updateCartItem = async (req: AuthRequest, res: Response) => {
     
     res.json(result.rows[0]);
   } catch (error) {
-    console.error('❌ Ошибка обновления корзины:', error);
+    console.error(' Ошибка обновления корзины:', error);
     res.status(500).json({ message: 'Ошибка сервера' });
   }
 };
@@ -101,7 +101,7 @@ export const updateCartItem = async (req: AuthRequest, res: Response) => {
 export const removeFromCart = async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user.id;
-    // Исправлено: правильно получаем productId
+    
     const productId = parseInt(req.params.productId as string);
     
     if (isNaN(productId)) {
@@ -119,7 +119,7 @@ export const removeFromCart = async (req: AuthRequest, res: Response) => {
     
     res.json({ message: 'Товар удалён из корзины' });
   } catch (error) {
-    console.error('❌ Ошибка удаления из корзины:', error);
+    console.error(' Ошибка удаления из корзины:', error);
     res.status(500).json({ message: 'Ошибка сервера' });
   }
 };
@@ -133,7 +133,7 @@ export const clearCart = async (req: AuthRequest, res: Response) => {
     
     res.json({ message: 'Корзина очищена' });
   } catch (error) {
-    console.error('❌ Ошибка очистки корзины:', error);
+    console.error(' Ошибка очистки корзины:', error);
     res.status(500).json({ message: 'Ошибка сервера' });
   }
 };

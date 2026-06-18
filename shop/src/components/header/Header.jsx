@@ -37,7 +37,7 @@ export default function Header({
     onSearch(value);
   };
 
-  // Закрываем дропдаун при клике вне него
+  
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -51,7 +51,7 @@ export default function Header({
     };
   }, []);
 
-  // Закрываем корзину при клике вне
+  
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (cartRef.current && 
@@ -85,7 +85,7 @@ export default function Header({
 
   const handleLogout = () => {
     setIsDropdownOpen(false);
-    onLogout(); // ← вызываем функцию из App
+    onLogout(); 
   };
 
   const handleLogin = (userData) => {

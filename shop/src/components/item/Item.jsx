@@ -33,7 +33,7 @@ export class Item extends Component {
       <div className="item">
         <img src={"./img/" + item.img} alt={item.title} />
         <h2>{item.title}</h2>
-        <p>{item.desc}</p>
+        <p>{item.description || item.desc}</p>
         <b>{item.price}р.</b>
         <div 
           className="add-to-cart" 

@@ -224,7 +224,7 @@
   border-radius: 10px;
 }
 
-/* Добавьте в конец файла */
+
 .auth-error {
   background: #fee;
   border: 1px solid #ff4444;
@@ -242,34 +242,3 @@
   transform: none !important;
 }
 
-/* Адаптивность */
-@media (max-width: 768px) {
-  .auth-modal {
-    max-width: 90%;
-  }
-  
-  .auth-header {
-    padding: 30px 30px 15px;
-  }
-  
-  .auth-header h2 {
-    font-size: 24px;
-  }
-  
-  .auth-form {
-    padding: 0 30px 25px;
-  }
-  
-  .auth-footer {
-    padding: 0 30px 30px;
-  }
-  
-  .auth-demo {
-    margin: 15px 30px 25px;
-  }
-  
-  .form-group input {
-    padding: 12px 14px;
-    font-size: 14px;
-  }
-}

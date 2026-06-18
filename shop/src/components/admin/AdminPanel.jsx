@@ -6,7 +6,7 @@ export default function AdminPanel({ items, onAddProduct, onDeleteProduct }) {
   const [formData, setFormData] = useState({
     title: '',
     img: '',
-    desc: '',
+    description: '', 
     category: '',
     price: ''
   });
@@ -24,7 +24,7 @@ export default function AdminPanel({ items, onAddProduct, onDeleteProduct }) {
     setFormData({
       title: '',
       img: '',
-      desc: '',
+      description: '',
       category: '',
       price: ''
     });
@@ -41,7 +41,7 @@ export default function AdminPanel({ items, onAddProduct, onDeleteProduct }) {
       id: Date.now(),
       title: formData.title,
       img: formData.img,
-      desc: formData.desc,
+      description: formData.description,  
       category: formData.category,
       price: parseInt(formData.price)
     };
@@ -62,18 +62,17 @@ export default function AdminPanel({ items, onAddProduct, onDeleteProduct }) {
   return (
     <div className="admin-panel">
       <div className="admin-header">
-        <h2>📦 Управление товарами</h2>
+        <h2> Управление товарами</h2>
         <button className="add-product-btn" onClick={() => setShowAddModal(true)}>
-          ➕ Добавить товар
+          + Добавить товар
         </button>
       </div>
 
-      {/* Модальное окно добавления товара */}
       {showAddModal && (
         <div className="admin-modal-overlay" onClick={closeModals}>
           <div className="admin-modal" onClick={(e) => e.stopPropagation()}>
             <button className="modal-close" onClick={closeModals}>×</button>
-            <h2>➕ Добавление товара</h2>
+            <h2>+ Добавление товара</h2>
             
             <form onSubmit={handleAddSubmit}>
               <div className="form-group">
@@ -114,7 +113,7 @@ export default function AdminPanel({ items, onAddProduct, onDeleteProduct }) {
                 </div>
                 {formData.img && (
                   <div className="image-preview">
-                    <span>📷 {formData.img}</span>
+                    <span> {formData.img}</span>
                   </div>
                 )}
               </div>
@@ -122,9 +121,9 @@ export default function AdminPanel({ items, onAddProduct, onDeleteProduct }) {
               <div className="form-group">
                 <label>Описание</label>
                 <textarea
-                  name="desc"
+                  name="description"  
                   placeholder="Описание товара"
-                  value={formData.desc}
+                  value={formData.description}
                   onChange={handleInputChange}
                   required
                 />

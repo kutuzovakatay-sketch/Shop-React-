@@ -10,7 +10,7 @@ import { authenticate } from '../middleware/auth';
 
 const router = Router();
 
-// Все маршруты требуют авторизации
+
 router.use(authenticate);
 
 router.get('/', getCart);

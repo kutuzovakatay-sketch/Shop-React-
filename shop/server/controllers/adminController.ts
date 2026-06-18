@@ -4,21 +4,21 @@ import pool from '../utils/database';
 
 export const getAllUsers = async (req: AuthRequest, res: Response) => {
   try {
-    // ВНИМАНИЕ: isadmin (все строчные) - имя колонки в БД
+    
     const result = await pool.query(
       'SELECT id, name, email, isadmin, created_at FROM users ORDER BY id',
       []
     );
     res.json(result.rows);
   } catch (error) {
-    console.error('❌ Ошибка получения пользователей:', error);
+    console.error(' Ошибка получения пользователей:', error);
     res.status(500).json({ message: 'Ошибка сервера' });
   }
 };
 
 export const deleteUser = async (req: AuthRequest, res: Response) => {
   try {
-    // Исправлено: правильно получаем id
+    
     const userId = parseInt(req.params.id as string);
     
     if (isNaN(userId)) {
@@ -33,7 +33,7 @@ export const deleteUser = async (req: AuthRequest, res: Response) => {
     await pool.query('DELETE FROM users WHERE id = $1', [userId]);
     res.json({ message: 'Пользователь удалён' });
   } catch (error) {
-    console.error('❌ Ошибка удаления пользователя:', error);
+    console.error(' Ошибка удаления пользователя:', error);
     res.status(500).json({ message: 'Ошибка сервера' });
   }
 };
